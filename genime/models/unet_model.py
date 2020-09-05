@@ -126,7 +126,7 @@ class UNetModel(LightningModule):
             'log': tensorboard_logs,
         }
 
-        if batch_idx % 100 == 0:
+        if batch_idx % 1000 == 0:
             print(batch_idx, loss.item())
 
         return output

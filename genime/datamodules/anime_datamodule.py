@@ -20,7 +20,7 @@ class AnimeDataModule(LightningDataModule):
         self.data_dir = data_dir
         self.num_workers = num_workers
         self.transform = Compose([
-            Resize(size=64),
+            Resize(size=(64, 64)),
             ToTensor(),  #TODO Normalize
         ])
 
