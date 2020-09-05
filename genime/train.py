@@ -15,7 +15,7 @@ def main(args):
     model = UNetModel(
         lr=3e-4,
         n_channels=3,
-        n_classes=2,
+        n_classes=3,
     )
 
     datamodule = AnimeDataModule(

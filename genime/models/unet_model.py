@@ -126,7 +126,7 @@ class UNetModel(LightningModule):
             'log': tensorboard_logs,
         }
 
-        if batch_idx % 25 == 0:
+        if batch_idx % 100 == 0:
             print(batch_idx, loss.item())
 
         return output
@@ -138,7 +138,6 @@ class UNetModel(LightningModule):
     def validation_step(self, batch, batch_idx): #TODO
         x, y = batch
         y_hat = self.forward(x)
-        print('???', y_hat.shape)
 
         criterion = MSELoss()
         loss = criterion(y_hat, y)

@@ -23,8 +23,6 @@ class AnimeDataset(Dataset):
 
         damaged_img = self.damaged(img)
 
-        print('!!!!!', img.shape, damaged_img.shape)
-
         return (img, damaged_img)
 
     @staticmethod
