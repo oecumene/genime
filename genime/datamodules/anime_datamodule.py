@@ -34,7 +34,6 @@ class AnimeDataModule(LightningDataModule):
             train_ratio: float,
             val_ratio: float,
         ):  #here we create datasets for dataloaders
-        print(self.data_dir)
         filenames = [str(p) for p in Path(self.data_dir).glob('*.jpg')]
 
         train_val_test_dataset = AnimeDataset(
@@ -49,7 +48,6 @@ class AnimeDataModule(LightningDataModule):
 
         print(f"Dataset size: {dataset_size}")
         print(train_size, val_size, test_size)
-        print(train_size + val_size + test_size)
 
         train_val_dataset, self.test_dataset = random_split(
             dataset=train_val_test_dataset,
