@@ -22,14 +22,18 @@ class Block(Module):
             out_channels: int,
         ):
         super().__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.block = Sequential(
             Conv2d(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=3,
-                padding=1),
+                padding=1,
+            ),
             BatchNorm2d(out_channels),
-            ReLU(inplace=True))
+            ReLU(inplace=True),
+        )
 
     def forward(self, x):
         output = self.block(x)
@@ -44,10 +48,13 @@ class BlockDown(Module):
             out_channels: int,
         ):
         super().__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.block_down = Sequential( #TODO mid_channels == in_channels // 2 == out_channels * 2
             Block(in_channels=in_channels, out_channels=out_channels),
             Block(in_channels=out_channels, out_channels=out_channels),
-            MaxPool2d(kernel_size=2, stride=2))
+            MaxPool2d(kernel_size=2, stride=2),
+        )
 
     def forward(self, x):
         output = self.block_down(x)
@@ -62,14 +69,18 @@ class BlockUp(Module):
             out_channels: int,
         ):
         super().__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.block_up = Sequential(
-            Block(in_channels=in_channels * 2, out_channels=out_channels),
+            Block(in_channels=in_channels, out_channels=out_channels),
             Block(in_channels=out_channels, out_channels=out_channels),
             ConvTranspose2d(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=2,
-                stride=2))
+                stride=2,
+            ),
+        )
 
     def forward(self, x_1, x_2):
         x = torch.cat([x_1, x_2], dim=1)
@@ -93,23 +104,19 @@ class UNetModel(LightningModule):
         self.block_down_1 = BlockDown(self.n_channels, 10)
         self.block_down_2 = BlockDown(10, 20)
         self.block_down_3 = BlockDown(20, 30)
-        self.block_down_4 = BlockDown(30, 40)
 
-        self.block_up_1 = BlockUp(40, 30)
-        self.block_up_2 = BlockUp(30, 20)
-        self.block_up_3 = BlockUp(20, 10)
-        self.block_up_4 = BlockUp(10, n_classes)
+        self.block_up_1 = BlockUp(60, 20)
+        self.block_up_2 = BlockUp(40, 10)
+        self.block_up_3 = BlockUp(20, self.n_classes)
 
-    def forward(self, x_0):
-        x_1 = self.block_down_1(x_0)
-        x_2 = self.block_down_2(x_1)
-        x_3 = self.block_down_3(x_2)
-        x_4 = self.block_down_4(x_3)
+    def forward(self, x_0):          #3  64
+        x_1 = self.block_down_1(x_0) #10 32
+        x_2 = self.block_down_2(x_1) #20 16
+        x_3 = self.block_down_3(x_2) #30 8
 
-        x = self.block_up_1(x_4, x_4)
-        x = self.block_up_2(x, x)
-        x = self.block_up_3(x, x)
-        x = self.block_up_4(x, x)
+        x = self.block_up_1(x_3, x_3)#20
+        x = self.block_up_2(x_2, x)  #10
+        x = self.block_up_3(x_1, x)  #3
 
         return x
 
@@ -132,7 +139,6 @@ class UNetModel(LightningModule):
         return output
 
     def training_epoch_end(self, outputs):
-        print('END')
         return {}
 
     def validation_step(self, batch, batch_idx): #TODO
@@ -141,7 +147,7 @@ class UNetModel(LightningModule):
 
         criterion = MSELoss()
         loss = criterion(y_hat, y)
-        preds = torch.argmax(y_hat, dim=1)
+        #preds = torch.argmax(y_hat, dim=1)
 
         output = {
             'val_loss': loss,
