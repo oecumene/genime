@@ -192,7 +192,8 @@ class UNetModel(LightningModule):
             parser.add_argument(
                 f'--{arg_name}',
                 type=args_info[arg_name]['type'],
-                default=args_info[arg_name]['default'])
+                default=args_info[arg_name]['default'],
+            )
 
         return parser
 

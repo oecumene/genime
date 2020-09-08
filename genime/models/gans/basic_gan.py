@@ -1,5 +1,6 @@
 import torch
 from torch.nn import Module, Sequential
+from torch.nn import BCELoss
 from torch.nn import (
     BatchNorm2d
     Conv2d,
@@ -91,7 +92,9 @@ class BasicDiscriminator(Module):  #TODO calc shapes
         )
 
     def forward(self, x):
-        pass
+        output = self.main(x)
+
+        return output
 
 
 class BasicGAN(LightningModule):
@@ -106,10 +109,30 @@ class BasicGAN(LightningModule):
         return self.generator(z)
 
     def generator_loss(self):
-        pass
+        z = None #TODO noise
+        x_fake = self.generator(x)
+        y_fake = None #TODO torch.ones
+        y_fake_hat = self.discriminator(x_fake)
+        generator_loss = BCELoss()(y_fake_hat, y_fake)
 
-    def discriminator_loss(self):
-        pass
+        return generator_loss
+
+
+    def discriminator_loss(self, x):
+        x_real = None #TODO reshape x?
+        y_real = None #TODO torch.ones
+        y_real_hat = self.discriminator(x_real)
+        real_discirminator_loss = BCELoss()(y_real_hat, y_real)
+
+        z = None #TODO noise
+        x_fake = self.generator(z)
+        y_fake = None #TODO torch.zeros
+        y_fake_hat = self.discriminator(x_fake)
+        fake_discirminator_loss = BCELoss()(y_fake_hat, y_fake)
+
+        discriminator_loss = real_discriminator_loss + fake_discriminator_loss
+
+        return discriminator_loss
 
     def generator_step(self):
         pass
@@ -117,8 +140,9 @@ class BasicGAN(LightningModule):
     def discriminator_step(self):
         pass
 
-    def training_step(self, batch, batch_idx):
-        pass
+    def training_step(self, batch, batch_idx, optimizer_idx):
+        if optimizer_idx % 2 == 0:
+            generator_step
 
     def configure_optimizers(self):
         pass
