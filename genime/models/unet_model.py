@@ -26,8 +26,8 @@ class Block(Module):
         self.out_channels = out_channels
         self.block = Sequential(
             Conv2d(
-                in_channels=in_channels,
-                out_channels=out_channels,
+                in_channels=self.n_channels,
+                out_channels=self.out_channels,
                 kernel_size=3,
                 padding=1,
             ),
@@ -51,8 +51,14 @@ class BlockDown(Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.block_down = Sequential( #TODO mid_channels == in_channels // 2 == out_channels * 2
-            Block(in_channels=in_channels, out_channels=out_channels),
-            Block(in_channels=out_channels, out_channels=out_channels),
+            Block(
+                in_channels=self.in_channels,
+                out_channels=self.out_channels,
+            ),
+            Block(
+                in_channels=self.out_channels,
+                out_channels=self.out_channels,
+            ),
             MaxPool2d(kernel_size=2, stride=2),
         )
 
@@ -72,8 +78,14 @@ class BlockUp(Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.block_up = Sequential(
-            Block(in_channels=in_channels, out_channels=out_channels),
-            Block(in_channels=out_channels, out_channels=out_channels),
+            Block(
+                in_channels=self.in_channels,
+                out_channels=self.out_channels,
+            ),
+            Block(
+                in_channels=self.out_channels,
+                out_channels=self.out_channels,
+            ),
             ConvTranspose2d(
                 in_channels=out_channels,
                 out_channels=out_channels,
