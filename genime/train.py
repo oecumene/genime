@@ -47,7 +47,6 @@ def main(args):
         train_dataloader=datamodule.train_dataloader(),
         val_dataloaders=datamodule.val_dataloader(),
     )
-    print('AAAAAABBBBBBBBBBBBBBBBBBBBBBBBAAAAAAAAAAAAAAAA')
     trainer.test(
         test_dataloaders=datamodule.test_dataloader(),
         ckpt_path='best',
