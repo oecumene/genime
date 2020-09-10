@@ -5,16 +5,15 @@ from setuptools import setup
 def main():
     package_name = "genime"
     package_path = Path(__file__).parent.absolute()
-    print(package_path)
 
     packages = {
         str(p.parent.relative_to(package_path)).replace('/', '.')
         for p in (package_path / package_name).rglob("__init__.py")
     }
 
-    setuptools.setup(
+    setup(
         name=package_name,
-        version="0.0.1",
+        version="0.1.0",
         description="Generative Anime",
         packages=packages,
         package_dir={package_name: package_name},
@@ -26,6 +25,9 @@ def main():
             "Operating System :: OS Independent",
         ],
         python_requires='>=3.6',
+        install_requires=[
+            'numpy>=1.14.5',
+        ]
     )
 
 

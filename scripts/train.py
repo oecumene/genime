@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 
 from pytorch_lightning import Trainer
 
+import genime
 from genime.constants import ANIME_DATAMODULE_ARGS_INFO, UNET_MODEL_ARGS_INFO
 from genime.datamodules import AnimeDataModule
 from genime.models import UNetModel
@@ -33,6 +34,7 @@ def main(args):
         args=args,
         auto_lr_find=args.auto_lr_find,
         logger=False,
+        gpus=1,
     )
 
     print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
