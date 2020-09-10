@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python genime/train.py
+python scripts/train.py
 
